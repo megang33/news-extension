@@ -15,8 +15,8 @@ Make sure you have [Node.js](https://nodejs.org/) (version 18+ or 20+) installed
 
     ```sh
     # To clone
-    git clone https://github.com/5tigerjelly/chrome-extension-react-template
-    cd chrome-extension-react-template
+    git clone https://github.com/megang33/news-extension
+    cd news-extension
     ```
 
 2. Install the dependencies:
