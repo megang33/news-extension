@@ -2,6 +2,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from src.get_conclusion.get_conclusion import get_fact_check_result
 from src.query_generator.generate_query import generate_clean_query
+from src.search_utils.search_google import search_articles
 
 app = Flask(__name__)
 CORS(app)
@@ -20,6 +21,35 @@ def handle_generate_query():
     except Exception as e:
         return jsonify({ "error": str(e) }), 500
 
+
+@app.route("/search_and_check", methods=["POST"])
+def handle_search_and_check():
+    claim = request.json.get("claim", "")
+    if not claim:
+        return jsonify({"error": "Missing claim"}), 400
+
+    try:
+        refined_query = generate_clean_query(claim)
+        articles = search_articles(refined_query)
+
+        results = []
+        for article in articles:
+            passage = article["snippet"]  # Later: replace with full article text
+            fact_check = get_fact_check_result(claim, passage)
+
+            results.append({
+                "title": article["title"],
+                "link": article["link"],
+                "fact_check": fact_check
+            })
+
+        return jsonify({
+            "refined_query": refined_query,
+            "results": results
+        })
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @app.route("/get_conclusion", methods=["POST"])
 def handle_request():

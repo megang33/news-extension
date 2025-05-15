@@ -7,7 +7,8 @@ function App() {
   const [relation, setRelation] = useState("");
   const [extractedQuote, setExtractedQuote] = useState("");
   const [scores, setScores] = useState<{ supports: number; contradicts: number; unclear: number } | null>(null);
-
+  const [articles, setArticles] = useState<any[]>([]);
+  
   useEffect(() => {
     chrome.storage.local.get("selectedText", (result) => {
       console.log(result.selectedText);
@@ -16,6 +17,7 @@ function App() {
         setSelectedText(text);
         getQuery(text);  // call notebook
         getConclusion(text); // call notebook
+        runFullPipeline(text); // fetch articles + fact-checking
       }
     });
   }, []);
@@ -62,6 +64,24 @@ function App() {
     }
   };
 
+  const runFullPipeline = async (claim: string) => {
+    try {
+      const response = await fetch("http://localhost:8888/search_and_check", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ claim })
+      });
+
+      const data = await response.json();
+      console.log("Full pipeline response:", data);
+      setArticles(data.results || []);
+    } catch (error) {
+      console.error("Error running full pipeline:", error);
+    }
+  };
+
 
   return (
     <>
@@ -103,8 +123,22 @@ function App() {
           </ul>
         </div> )}
 
+       {articles.length > 0 && (
+        <div>
+          <h3>Sources:</h3>
+          <ul>
+            {articles.map((article, index) => (
+              <li key={index}>
+                <a href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
+                <p><strong>Conclusion:</strong> {article.fact_check.relation}</p>
+                <p><strong>Quote:</strong> {article.fact_check.extractedQuote}</p>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
