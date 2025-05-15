@@ -1,37 +1,36 @@
-# React Chrome Extension Template
+# Fact-Checking News Extension
 
-This is a template for creating a Chrome extension using React and [Vite](https://vitejs.dev/) with TypeScript.
+This is a chrome-based extension for fact checking.
 
+## Set up
 
-## Getting Started
-
-### Prerequisites
-
-Make sure you have [Node.js](https://nodejs.org/) (version 18+ or 20+) installed on your machine.
-
-### Setup
-
-1. Clone or fork the repository :
-
+1. Clone the repository
     ```sh
-    # To clone
-    git clone https://github.com/megang33/news-extension
-    cd news-extension
+        git clone https://github.com/megang33/news-extension
+        cd news-extension
     ```
-
 2. Install the dependencies:
 
     ```sh
     npm install
     ```
-
-3. Setup LLM server in a virtual environment:
+3. Create a Production Build
+    ```sh
+    npm run build
+    ```
+4. Setup LLM server in a virtual environment:
     ```sh
     ./setup.sh
     python run_llm_server.py
     ```
+5. Add extension to Chrome: see "Load extension in Chrome"
 
-## 🏗️ Development
+## How to Use (Interaction Flow)
+1. Find a quote in an article that you're interested in.
+2. Highlight the quote and right click. In the context menu, choose this extension.
+3. In the side panel, the conclusion and sources will be shown. You can click on sources to learn more, save the quote, or close the panel.
+
+## Development
 
 To start the development server:
 
@@ -39,19 +38,9 @@ To start the development server:
 npm run dev
 ```
 
-This will start the Vite development server and open your default browser.
+This will start the Vite development server and open your default browser. This shows you what the extension panel looks like.
 
-## 📦 Build 
-
-To create a production build:
-
-```sh
-npm run build
-```
-
-This will generate the build files in the `build` directory.
-
-## 📂 Load Extension in Chrome
+## Load Extension in Chrome
 
 1. Open Chrome and navigate to `chrome://extensions/`.
 2. Enable "Developer mode" using the toggle switch in the top right corner.
@@ -59,7 +48,7 @@ This will generate the build files in the `build` directory.
 
 Your React app should now be loaded as a Chrome extension!
 
-## 🗂️ Project Structure
+## Project Structure
 
 - `public/`: Contains static files and the `manifest.json`.
 - `src/`: Contains the React app source code.
