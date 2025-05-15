@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-build
+build/
 
 # Editor directories and files
 .vscode/*
@@ -24,3 +24,16 @@ build
 *.njsproj
 *.sln
 *.sw?
+
+venv
+Thumbs.db
+
+# Compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment files
+.env
+.env.local
+.env.*.local
