@@ -24,3 +24,8 @@ build
 *.njsproj
 *.sln
 *.sw?
+
+# virtual environment
+venv/
+src/get_conclusion/__pycache__/
+src/query_generator/__pycache__/

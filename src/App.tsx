@@ -1,19 +1,42 @@
 import { useState, useEffect } from 'react'
 import './App.css'
+// import { CiBookmark } from "react-icons/ci";
+
+interface Scores {
+  supports: number
+  contradicts: number
+  unclear: number
+}
+
+interface Article {
+  link: string
+  quote: string
+  conclusion: string
+}
+
+interface Highlight {
+  id: number // unique number for each new highlight
+  sentence: string
+  conclusion: string
+  scores: Scores | null
+  articles: Article[] // how do we want to represent articles, use extracted data
+}
 
 function App() {
   const [selectedText, setSelectedText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [relation, setRelation] = useState("");
   const [extractedQuote, setExtractedQuote] = useState("");
-  const [scores, setScores] = useState<{ supports: number; contradicts: number; unclear: number } | null>(null);
+  const [scores, setScores] = useState<Scores | null>(null);
+  // const [savedList, setSavedList] = useState<Highlight[]>([])
+  const [currentHighlight, setCurrentHighlight] = useState<Highlight | null>(null)
 
   useEffect(() => {
-    chrome.storage.local.get("selectedText", (result) => {
+    chrome.storage?.local.get("selectedText", (result) => {
       console.log(result.selectedText);
       if (result.selectedText) {
         const text = result.selectedText;
-        setSelectedText(text);
+        setSelectedText(text)
         getQuery(text);  // call notebook
         getConclusion(text); // call notebook
       }
@@ -30,16 +53,17 @@ function App() {
         },
         body: JSON.stringify({ text })
       });
-  
+
       const data = await response.json();
       const query = data.query || "";
       setSearchQuery(query);
       console.log("Generated Query:", query);
+      console.log(searchQuery) // so react doesn't complain
     } catch (error) {
       console.error("Error generating query:", error);
     }
   };
-  
+
 
   const getConclusion = async (text: string) => {
     try {
@@ -56,54 +80,60 @@ function App() {
       setRelation(data.relation || "unknown");
       setExtractedQuote(data.extractedQuote || "");
       setScores(data.scores || null);
+
+      const newHighlight: Highlight = {
+        id: Date.now(), // unique ID based on timestamp
+        sentence: text,
+        conclusion: relation,
+        scores: scores,
+        articles: [
+          {
+            link: "", // TODO when maddy's code is implemented
+            quote: extractedQuote,
+            conclusion: relation // TODO update when mult article conclusions are supported
+          }
+        ]
+      };
+      setCurrentHighlight(newHighlight)
+      console.log(currentHighlight)
     } catch (error) {
       console.error("Error fetching conclusion:", error);
       setRelation("error");
     }
   };
 
+  // Save Function
+  // const toggleSaveHighlight = (highlight: Highlight | null) => {
+  //   if (highlight) {
+  //     // if save checked
+  //     setSavedList([...savedList, highlight])
+  //     // else remove
+  //     // setSavedList(savedList.filter((h) => h.id !== highlight.id));
+  //   }
+  // }
 
   return (
-    <>
-      {/*<div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div> */}
-      <h1>Fact-Checking</h1>
-      <button onClick={() => { }}>
-        Start Read
-      </button>
-      {selectedText && <p>{selectedText}</p>}
-      {searchQuery && <p>Search Query: {searchQuery}</p>}
-      {/* <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
+    <div className="layout">
+      <h3 className="header">Fact-Check</h3>
+      {/* <button className="save-button" onClick={() => toggleSaveHighlight(currentHighlight)}><CiBookmark /></button> */}
+      <div className="highlight-section">
+        {selectedText && <p><strong>Highlighted Sentence: </strong>{selectedText}</p>}
+        {/* {searchQuery && <p>Search Query: {searchQuery}</p>} */}
+
+        {relation && <p className="conclusion" data-status={relation}><strong>Conclusion:</strong> {relation}</p>}
+        {extractedQuote && <p><strong>Extracted Sentence:</strong> “{extractedQuote}”</p>}
+        {scores && (
+          <div>
+            <strong>Probabilities:</strong>
+            <ul>
+              <li>Supports: {scores.supports}</li>
+              <li>Contradicts: {scores.contradicts}</li>
+              <li>Unclear: {scores.unclear}</li>
+            </ul>
+          </div>)}
       </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p> */}
 
-      {relation && <p><strong>Conclusion:</strong> {relation}</p>}
-      {extractedQuote && <p><strong>Extracted Sentence:</strong> “{extractedQuote}”</p>}
-      {scores && (
-        <div>
-          <strong>Probabilities:</strong>
-          <ul>
-            <li>Supports: {scores.supports}</li>
-            <li>Contradicts: {scores.contradicts}</li>
-            <li>Unclear: {scores.unclear}</li>
-          </ul>
-        </div> )}
-
-    </>
+    </div>
   )
 }
 

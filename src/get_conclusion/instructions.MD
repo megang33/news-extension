@@ -3,6 +3,11 @@ Setup virtual environment and download dependencies.
 ./setup.sh
 ```
 
+Activate virtual environment
+```sh
+source venv/bin/activate
+```
+
 Run the llm server in the local terminal.
 This should work on Macbooks that have the MPS GPU.
 ```sh
