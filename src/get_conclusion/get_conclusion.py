@@ -21,13 +21,11 @@ def does_passage_support_quote(quote, passage):
     contradict_prob = probs[0][0].item()
     unclear_prob = probs[0][1].item()
 
-    # print(f"Supports: {support_prob:.2f}, Unclear: {unclear_prob:.2f}, Contradicts: {contradict_prob:.2f}")
-    # if support_prob > contradict_prob:
-    #     return "supports"
-    # else:
-    #     return "contradicts"
-
-    relation = "supports" if support_prob > contradict_prob else "contradicts"
+    if unclear_prob > 0.5:
+        relation = "unclear"
+    else:
+        relation = "supports" if support_prob > contradict_prob else "contradicts"
+    
     return relation, {
         "supports": round(support_prob, 2),
         "contradicts": round(contradict_prob, 2),

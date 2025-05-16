@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-build
+build/
 
 # Editor directories and files
 .vscode/*
@@ -27,5 +27,15 @@ build
 
 # virtual environment
 venv/
-src/get_conclusion/__pycache__/
-src/query_generator/__pycache__/
+venv
+Thumbs.db
+
+# Compiled files
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Environment files
+.env
+.env.local
+.env.*.local
