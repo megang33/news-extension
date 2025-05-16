@@ -38,13 +38,10 @@ def scrape_article_content(url):
 
         soup = BeautifulSoup(response.text, "html.parser")
 
-        # Extract content: You'll likely need to inspect the page to find the correct selector
-        # Common article content classes might be: article, content, main-content, etc.
-        article = soup.find("article")  # Modify this according to the article structure
+        article = soup.find("article") 
         if article:
             return article.get_text(strip=True)
         else:
-            # Fallback to finding content within a common tag (e.g., div or p)
             paragraphs = soup.find_all("p")
             return " ".join([p.get_text() for p in paragraphs])
 
