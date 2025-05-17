@@ -7,19 +7,15 @@ from transformers import pipeline
 device = torch.device("mps" if torch.backends.mps.is_available() else "cpu")
 
 nli_model_name = "roberta-large-mnli"
-nli_tokenizer = AutoTokenizer.from_pretrained(nli_model_name)
-nli_model = AutoModelForSequenceClassification.from_pretrained(nli_model_name).to(device)
-nli_model.eval()
+classifier = pipeline("zero-shot-classification", model=nli_model_name)
 
 def does_passage_support_quote(quote, passage):
-    inputs = nli_tokenizer(passage, quote, return_tensors="pt", truncation=True).to(device)
-    with torch.no_grad():
-        logits = nli_model(**inputs).logits
-        probs = F.softmax(logits, dim=1)
+    combined_text = f"Claim: {quote}\nEvidence: {passage}"
+    result = classifier(combined_text, candidate_labels=["supports", "contradicts", "not enough info"])
 
-    support_prob = probs[0][2].item()
-    contradict_prob = probs[0][0].item()
-    unclear_prob = probs[0][1].item()
+    support_prob = result['scores'][result['labels'].index('supports')] if "supports" in result['labels'] else 0
+    contradict_prob = result['scores'][result['labels'].index('contradicts')] if "contradicts" in result['labels'] else 0
+    unclear_prob = result['scores'][result['labels'].index('not enough info')] if "not enough info" in result['labels'] else 0
 
     if unclear_prob > 0.5:
         relation = "unclear"
@@ -27,11 +23,10 @@ def does_passage_support_quote(quote, passage):
         relation = "supports" if support_prob > contradict_prob else "contradicts"
     
     return relation, {
-        "supports": round(support_prob, 2),
-        "contradicts": round(contradict_prob, 2),
-        "unclear": round(unclear_prob, 2)
+        "supports": round(support_prob, 4),
+        "contradicts": round(contradict_prob, 4),
+        "unclear": round(unclear_prob, 4)
     }
-    
 
 qa_pipeline = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
 
@@ -69,7 +64,6 @@ def get_fact_check_result(quote: str, passage: str) -> dict:
     return result
 
 
-
 # quote = "Climate change is caused by human activities."
 # passage = (
 #     "Climate scientists have gathered overwhelming evidence that human activities, "
@@ -81,3 +75,4 @@ def get_fact_check_result(quote: str, passage: str) -> dict:
 #     "These findings are based on a combination of observational data, climate modeling, and attribution studies."
 # )
 # print(get_fact_check_result(quote, passage))
+
