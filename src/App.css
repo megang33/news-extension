@@ -46,42 +46,48 @@
 
 .layout {
   display: flex;
-  flex-direction: column
+  flex-direction: column;
+  text-align: left;
 }
 
 .header {
-  position: fixed;
-  top: 0;
-  width: 100%;
+  /* position: fixed;
+  /* top: 0;
+  width: 100%; */
   align-self: center;
-  margin: 10px;
+  margin-top: 0;
 }
 
 .save-button {
   position: fixed;
-  margin: 20spx;
+  margin: 20px;
   right: 0;
   top: 0;
 }
 
 .highlight-section {
-  background: rgb(161, 160, 160);
+  background: rgb(222, 220, 220);
   border-radius: 20px;
+  padding: 5px 18px;
 }
 
 .conclusion {
-  border-radius: 20px;
-  /* width/height */
+  border-radius: 8px;
+  padding: 10px;
+  width: fit-content;
+  font-weight: bold;
 }
 
-[data-status="supported"] {
-  background-color: green;
+[data-status="supports"] {
+  background-color: #39a64f
 }
 
-[data-status="contradictory"] {
-  background-color: red;
+[data-status="contradicts"] {
+  background-color: rgb(244, 53, 53);
 }
 
 [data-status="unclear"] {
   background-color: grey;
 }
+
+.article-conclusion {}

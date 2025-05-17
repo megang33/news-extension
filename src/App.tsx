@@ -35,6 +35,58 @@ function App() {
     });
   }, []);
 
+  // Testing Only
+  useEffect(() => {
+    const mockConclusion = "unclear";
+    const mockConfidence = 0.9;
+    const mockArticles = [
+      {
+        title: "Trump's agenda faces crucial stretch with House Republicans",
+        link: "https://example.com/article1",
+        fact_check: {
+          relation: "unclear",
+          extractedQuote: "generated quote which may span more than one line hopefully???",
+          scores: {
+            supports: 0,
+            contradicts: 0,
+            unclear: 1
+          }
+        }
+      },
+      {
+        title: "Trump backs House's approach to budget plans to implement his...",
+        link: "https://example.com/article2",
+        fact_check: {
+          relation: "contradicts",
+          extractedQuote: "generated quote which may span more than one line hopefully???",
+          scores: {
+            supports: 0,
+            contradicts: 0.88,
+            unclear: 0.11
+          }
+        }
+      },
+      {
+        title: "Senate Republicans pass budget blueprint after all-night session...",
+        link: "https://example.com/article3",
+        fact_check: {
+          relation: "supports",
+          extractedQuote: "generated quote which may span more than one line hopefully???",
+          scores: {
+            supports: 0.6,
+            contradicts: 0.01,
+            unclear: 0.39
+          }
+        }
+      }
+    ];
+
+    // set the mock test state
+    setConclusion(mockConclusion);
+    setConfidence(mockConfidence);
+    setArticles(mockArticles);
+  }, []);
+
 
   const getQuery = async (text: string) => {
     try {
@@ -148,38 +200,22 @@ function App() {
 
   return (
     <div className="layout">
-      <h1>Fact-Checking</h1>
-      <button onClick={() => { }}>
-        Start Read
-      </button>
+      <h2 className="header">Fact-Checker</h2>
       <div className="highlight-section">
-        {selectedText && <p>{selectedText}</p>}
-        {searchQuery && <p>Search Query: {searchQuery}</p>}
+        {/* {selectedText && <p>{selectedText}</p>}
+        {searchQuery && <p>Search Query: {searchQuery}</p>} */}
+        <p><strong>Highlighted Sentence: </strong>Five Republicans opposed the bill in the Budget Committee's meeting on Friday to stitch together the various pieces of Trump's sweeping tax and spending cuts bill.</p>
 
-        {/*
-      {relation && <p><strong>Conclusion:</strong> {relation}</p>}
-      {extractedQuote && <p><strong>Extracted Sentence:</strong> “{extractedQuote}”</p>}
-      {scores && (
-        <div>
-          <strong>Probabilities:</strong>
-          <ul>
-            <li>Supports: {scores.supports}</li>
-            <li>Contradicts: {scores.contradicts}</li>
-            <li>Unclear: {scores.unclear}</li>
-          </ul>
-        </div> )} */}
-
-        {conclusion && <p className="conclusion" data-status={conclusion}><strong>Conclusion:</strong> {conclusion}</p>}
-        {confidence !== null && <p><strong>Confidence:</strong> {Math.round(confidence * 100)}%</p>}
+        {conclusion && <p className="conclusion" data-status={conclusion}>{conclusion} ({confidence !== null && <span>{Math.round(confidence * 100)}% Confidence</span>})</p>}
 
         {articles.length > 0 && (
           <div>
-            <h3>Sources:</h3>
-            <ul>
+            <h3>Sources</h3>
+            <ol>
               {articles.map((article, index) => (
-                <li key={index}>
+                <li key={index} className="article-section">
                   <a href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
-                  <p><strong>Conclusion: </strong> {article.fact_check.relation}</p>
+                  <p className="article-conclusion" data-status={article.fact_check.relation}><strong>Conclusion: </strong> {article.fact_check.relation}</p>
                   <p><strong>Extracted Quote: </strong> {article.fact_check.extractedQuote}</p>
                   <p>
                     <strong>Scores: </strong>
@@ -188,7 +224,7 @@ function App() {
 
                 </li>
               ))}
-            </ul>
+            </ol>
           </div>
         )}
       </div>
