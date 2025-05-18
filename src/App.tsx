@@ -18,9 +18,8 @@ function App() {
       if (result.selectedText) {
         const text = result.selectedText;
         setSelectedText(text);
-        getQuery(text);  // call notebook
-        // getConclusion(text, "Hi everyone!"); // call notebook
-        runFullPipeline(text); // fetch articles + fact-checking
+        getQuery(text);
+        runFullPipeline(text);
       }
     });
   }, []);

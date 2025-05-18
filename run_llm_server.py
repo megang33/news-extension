@@ -29,8 +29,10 @@ def handle_search_and_check():
         return jsonify({"error": "Missing claim"}), 400
 
     try:
+        # current_url = request.json.get("current_url", "")
         refined_query = generate_clean_query(claim)
         articles = search_articles(refined_query)
+        print("Total articles returned by search_articles:", len(articles))
 
         results = []
         for article in articles:
