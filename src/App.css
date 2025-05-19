@@ -3,6 +3,7 @@
   margin: 0 auto;
   padding: 2rem;
   text-align: center;
+  color: black;
 }
 
 .logo {
@@ -90,4 +91,19 @@
   background-color: grey;
 }
 
-.article-conclusion {}
+.article-conclusion {
+  padding: 5px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.article-heading {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.article-quote {
+  /* indent, grey, quotes... */
+}

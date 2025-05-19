@@ -214,13 +214,22 @@ function App() {
             <ol>
               {articles.map((article, index) => (
                 <li key={index} className="article-section">
-                  <a href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
-                  <p className="article-conclusion" data-status={article.fact_check.relation}><strong>Conclusion: </strong> {article.fact_check.relation}</p>
-                  <p><strong>Extracted Quote: </strong> {article.fact_check.extractedQuote}</p>
-                  <p>
+                  <div className="article-heading">
+                    <a href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
+                    <p className="article-conclusion" data-status={article.fact_check.relation}>{(() => {
+                      const scores = article.fact_check.scores;
+                      const maxScore = Math.max(scores.supports, scores.contradicts, scores.unclear);
+                      if (maxScore === scores.supports) return `${(maxScore * 100).toFixed(0)}%`;
+                      if (maxScore === scores.contradicts) return `${(maxScore * 100).toFixed(0)}%`;
+                      return `${(maxScore * 100).toFixed(0)}%`;
+                    })()}</p>
+                    {/* <p className="article-conclusion" data-status={article.fact_check.relation}>{article.fact_check.relation}</p> */}
+                  </div>
+                  <p className="article-quote">{article.fact_check.extractedQuote}</p>
+                  {/* <p>
                     <strong>Scores: </strong>
                     {`Supports: ${article.fact_check.scores.supports}, Contradicts: ${article.fact_check.scores.contradicts}, Unclear: ${article.fact_check.scores.unclear}`}
-                  </p>
+                  </p> */}
 
                 </li>
               ))}
