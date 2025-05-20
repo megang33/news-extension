@@ -1,19 +1,9 @@
 import { useState, useEffect } from 'react'
 import './App.css'
-// import { CiBookmark } from "react-icons/ci";
-
-interface Highlight {
-  id: number // unique number for each new highlight
-  sentence: string
-  conclusion: string
-  articles: any[]
-}
 
 function App() {
   const [selectedText, setSelectedText] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
-  // const [savedList, setSavedList] = useState<Highlight[]>([])
-  const [currentHighlight, setCurrentHighlight] = useState<Highlight | null>(null)
   // const [relation, setRelation] = useState("");
   // const [extractedQuote, setExtractedQuote] = useState("");
   // const [scores, setScores] = useState<{ supports: number; contradicts: number; unclear: number } | null>(null);
@@ -132,6 +122,7 @@ function App() {
   // };
 
   const runFullPipeline = async (claim: string) => {
+    console.log("Running Pipeline")
     try {
       const response = await fetch("http://localhost:8888/search_and_check", {
         method: "POST",
@@ -146,14 +137,6 @@ function App() {
       setArticles(data.results || []);
       determineConclusion(data.results || []);
 
-      const newHighlight: Highlight = {
-        id: Date.now(), // unique ID based on timestamp
-        sentence: selectedText,
-        conclusion: conclusion,
-        articles: articles
-      };
-      setCurrentHighlight(newHighlight)
-      console.log(currentHighlight)
     } catch (error) {
       console.error("Error running full pipeline:", error);
     }
@@ -187,22 +170,10 @@ function App() {
     }
   };
 
-  // Save Function
-  // const toggleSaveHighlight = (highlight: Highlight | null) => {
-  //   if (highlight) {
-  //     // if save checked
-  //     setSavedList([...savedList, highlight])
-  //     // else remove
-  //     // setSavedList(savedList.filter((h) => h.id !== highlight.id));
-  //   }
-  // }
-
   return (
     <div className="layout">
       <h2 className="header">Fact-Checker</h2>
       <div className="highlight-section">
-        {/* {selectedText && <p>{selectedText}</p>}
-        {searchQuery && <p>Search Query: {searchQuery}</p>} */}
         {selectedText &&
           <div className="statement-section">
             <p className="statement-title">{'\u{1f4a1}'} Statement Under Review</p>
@@ -226,13 +197,8 @@ function App() {
                       if (maxScore === scores.contradicts) return `${(maxScore * 100).toFixed(0)}%`;
                       return `${(maxScore * 100).toFixed(0)}%`;
                     })()}</p>
-                    {/* <p className="article-conclusion" data-status={article.fact_check.relation}>{article.fact_check.relation}</p> */}
                   </div>
                   <p className="article-quote">↪ "{article.fact_check.extractedQuote}"</p>
-                  {/* <p>
-                    <strong>Scores: </strong>
-                    {`Supports: ${article.fact_check.scores.supports}, Contradicts: ${article.fact_check.scores.contradicts}, Unclear: ${article.fact_check.scores.unclear}`}
-                  </p> */}
                   <div className="divider"></div>
                 </li>
               ))}

@@ -51,7 +51,7 @@ padding: 5px 18px;
 }
 
 .conclusion-section {
-  font-size: 18px;
+  font-size: 15px;
   padding-left: 20px;
 }
 
@@ -62,15 +62,15 @@ padding: 5px 18px;
   font-weight: bold;
 }
 
-[data-status="supports"] {
+[data-status="supports" i] {
   background-color: rgba(68, 182, 72, 0.288);
 }
 
-[data-status="contradicts"] {
+[data-status="contradicts" i] {
   background-color: rgba(244, 53, 53, 0.364);
 }
 
-[data-status="unclear"] {
+[data-status="unclear" i] {
   background-color: rgba(128, 128, 128, 0.215);
 }
 
