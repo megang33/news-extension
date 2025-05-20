@@ -36,56 +36,56 @@ function App() {
   }, []);
 
   // Testing Only
-  useEffect(() => {
-    const mockConclusion = "unclear";
-    const mockConfidence = 0.9;
-    const mockArticles = [
-      {
-        title: "Trump's agenda faces crucial stretch with House Republicans",
-        link: "https://example.com/article1",
-        fact_check: {
-          relation: "unclear",
-          extractedQuote: "generated quote which may span more than one line hopefully???",
-          scores: {
-            supports: 0,
-            contradicts: 0,
-            unclear: 1
-          }
-        }
-      },
-      {
-        title: "Trump backs House's approach to budget plans to implement his...",
-        link: "https://example.com/article2",
-        fact_check: {
-          relation: "contradicts",
-          extractedQuote: "generated quote which may span more than one line hopefully???",
-          scores: {
-            supports: 0,
-            contradicts: 0.88,
-            unclear: 0.11
-          }
-        }
-      },
-      {
-        title: "Senate Republicans pass budget blueprint after all-night session...",
-        link: "https://example.com/article3",
-        fact_check: {
-          relation: "supports",
-          extractedQuote: "generated quote which may span more than one line hopefully???",
-          scores: {
-            supports: 0.6,
-            contradicts: 0.01,
-            unclear: 0.39
-          }
-        }
-      }
-    ];
+  // useEffect(() => {
+  //   const mockConclusion = "unclear";
+  //   const mockConfidence = 0.9;
+  //   const mockArticles = [
+  //     {
+  //       title: "Trump's agenda faces crucial stretch with House Republicans",
+  //       link: "https://example.com/article1",
+  //       fact_check: {
+  //         relation: "unclear",
+  //         extractedQuote: "generated quote which may span more than one line hopefully???",
+  //         scores: {
+  //           supports: 0,
+  //           contradicts: 0,
+  //           unclear: 1
+  //         }
+  //       }
+  //     },
+  //     {
+  //       title: "Trump backs House's approach to budget plans to implement his...",
+  //       link: "https://example.com/article2",
+  //       fact_check: {
+  //         relation: "contradicts",
+  //         extractedQuote: "generated quote which may span more than one line hopefully???",
+  //         scores: {
+  //           supports: 0,
+  //           contradicts: 0.88,
+  //           unclear: 0.11
+  //         }
+  //       }
+  //     },
+  //     {
+  //       title: "Senate Republicans pass budget blueprint after all-night session...",
+  //       link: "https://example.com/article3",
+  //       fact_check: {
+  //         relation: "supports",
+  //         extractedQuote: "generated quote which may span more than one line hopefully???",
+  //         scores: {
+  //           supports: 0.6,
+  //           contradicts: 0.01,
+  //           unclear: 0.39
+  //         }
+  //       }
+  //     }
+  //   ];
 
-    // set the mock test state
-    setConclusion(mockConclusion);
-    setConfidence(mockConfidence);
-    setArticles(mockArticles);
-  }, []);
+  //   // set the mock test state
+  //   setConclusion(mockConclusion);
+  //   setConfidence(mockConfidence);
+  //   setArticles(mockArticles);
+  // }, []);
 
 
   const getQuery = async (text: string) => {
@@ -204,10 +204,11 @@ function App() {
       <div className="highlight-section">
         {/* {selectedText && <p>{selectedText}</p>}
         {searchQuery && <p>Search Query: {searchQuery}</p>} */}
-        <div className="statement-section">
-          <p className="statement-title">{'\u{1f4a1}'} Statement Under Review</p>
-          <p className="statement-body">Five Republicans opposed the bill in the Budget Committee's meeting on Friday to stitch together the various pieces of Trump's sweeping tax and spending cuts bill.</p>
-        </div>
+        {selectedText &&
+          <div className="statement-section">
+            <p className="statement-title">{'\u{1f4a1}'} Statement Under Review</p>
+            <p className="statement-body">{selectedText}</p>
+          </div>}
         <div className="conclusion-section">
           {conclusion && <p>Conclusion: <span className="conclusion" data-status={conclusion}>{conclusion}</span> {confidence !== null && <span>| {Math.round(confidence * 100)}% Confidence</span>}</p>}
         </div>
