@@ -204,18 +204,21 @@ function App() {
       <div className="highlight-section">
         {/* {selectedText && <p>{selectedText}</p>}
         {searchQuery && <p>Search Query: {searchQuery}</p>} */}
-        <p><strong>Highlighted Sentence: </strong>Five Republicans opposed the bill in the Budget Committee's meeting on Friday to stitch together the various pieces of Trump's sweeping tax and spending cuts bill.</p>
-
-        {conclusion && <p className="conclusion" data-status={conclusion}>{conclusion} ({confidence !== null && <span>{Math.round(confidence * 100)}% Confidence</span>})</p>}
-
+        <div className="statement-section">
+          <p className="statement-title">{'\u{1f4a1}'} Statement Under Review</p>
+          <p className="statement-body">Five Republicans opposed the bill in the Budget Committee's meeting on Friday to stitch together the various pieces of Trump's sweeping tax and spending cuts bill.</p>
+        </div>
+        <div className="conclusion-section">
+          {conclusion && <p>Conclusion: <span className="conclusion" data-status={conclusion}>{conclusion}</span> {confidence !== null && <span>| {Math.round(confidence * 100)}% Confidence</span>}</p>}
+        </div>
         {articles.length > 0 && (
-          <div>
-            <h3>Sources</h3>
+          <div className="article-section">
+            <h3>Evidence</h3>
             <ol>
               {articles.map((article, index) => (
-                <li key={index} className="article-section">
+                <li key={index} className="article-item">
                   <div className="article-heading">
-                    <a href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
+                    <a className="article-title" href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
                     <p className="article-conclusion" data-status={article.fact_check.relation}>{(() => {
                       const scores = article.fact_check.scores;
                       const maxScore = Math.max(scores.supports, scores.contradicts, scores.unclear);
@@ -225,12 +228,12 @@ function App() {
                     })()}</p>
                     {/* <p className="article-conclusion" data-status={article.fact_check.relation}>{article.fact_check.relation}</p> */}
                   </div>
-                  <p className="article-quote">{article.fact_check.extractedQuote}</p>
+                  <p className="article-quote">↪ "{article.fact_check.extractedQuote}"</p>
                   {/* <p>
                     <strong>Scores: </strong>
                     {`Supports: ${article.fact_check.scores.supports}, Contradicts: ${article.fact_check.scores.contradicts}, Unclear: ${article.fact_check.scores.unclear}`}
                   </p> */}
-
+                  <div className="divider"></div>
                 </li>
               ))}
             </ol>
