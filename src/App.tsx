@@ -27,10 +27,9 @@ function App() {
       console.log(result.selectedText);
       if (result.selectedText) {
         const text = result.selectedText;
-        setSelectedText(text)
-        getQuery(text);  // call notebook
-        // getConclusion(text, "Hi everyone!"); // call notebook
-        runFullPipeline(text); // fetch articles + fact-checking
+        setSelectedText(text);
+        getQuery(text);
+        runFullPipeline(text);
       }
     });
   }, []);

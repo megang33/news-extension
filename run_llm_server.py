@@ -29,12 +29,14 @@ def handle_search_and_check():
         return jsonify({"error": "Missing claim"}), 400
 
     try:
+        # current_url = request.json.get("current_url", "")
         refined_query = generate_clean_query(claim)
         articles = search_articles(refined_query)
+        print("Total articles returned by search_articles:", len(articles))
 
         results = []
         for article in articles:
-            passage = article["snippet"]  # Later: replace with full article text
+            passage = article["content"] 
             fact_check = get_fact_check_result(claim, passage)
 
             results.append({
@@ -42,6 +44,13 @@ def handle_search_and_check():
                 "link": article["link"],
                 "fact_check": fact_check
             })
+
+            # #delete later
+            # return jsonify({
+            #     "refined_query": refined_query,
+            #     "results": results
+            # })
+            # ###
 
         return jsonify({
             "refined_query": refined_query,
@@ -56,21 +65,10 @@ def handle_request():
     quote = request.json.get("quote", "")
     passage = request.json.get("passage", "")
     if not passage:
-        return jsonify({"error": "Missing passage"}), 400  # Ensure passage is provided
-        
-
-    # passage = (
-    #     "Climate scientists have gathered overwhelming evidence that human activities, "
-    #     "particularly the burning of fossil fuels like coal, oil, and gas, are the primary drivers of recent climate change. "
-    #     "The resulting increase in greenhouse gases, such as carbon dioxide and methane, has led to a warming of the Earth's atmosphere, "
-    #     "oceans, and land surfaces. Numerous studies conducted over the past decades consistently link industrial emissions to rising "
-    #     "global temperatures, melting ice caps, more frequent extreme weather events, and sea-level rise. In 2021, the Intergovernmental "
-    #     "Panel on Climate Change (IPCC) declared that it is 'unequivocal' that human influence has warmed the atmosphere, ocean, and land. "
-    #     "These findings are based on a combination of observational data, climate modeling, and attribution studies."
-    # )
-
+        return jsonify({"error": "Missing passage"}), 400 
     try:
         result = get_fact_check_result(quote, passage)
+        print(result)
         return jsonify(result)
     except Exception as e:
         return jsonify({ "relation": "error", "extractedQuote": str(e) }), 500
