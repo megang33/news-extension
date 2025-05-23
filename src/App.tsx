@@ -10,6 +10,7 @@ function App() {
   const [articles, setArticles] = useState<any[]>([]);
   const [conclusion, setConclusion] = useState("");
   const [confidence, setConfidence] = useState<number | null>(null);
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -123,6 +124,7 @@ function App() {
 
   const runFullPipeline = async (claim: string) => {
     console.log("Running Pipeline")
+    setLoading(true);
     try {
       const response = await fetch("http://localhost:8888/search_and_check", {
         method: "POST",
@@ -139,6 +141,8 @@ function App() {
 
     } catch (error) {
       console.error("Error running full pipeline:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -179,6 +183,11 @@ function App() {
             <p className="statement-title">{'\u{1f4a1}'} Statement Under Review</p>
             <p className="statement-body">{selectedText}</p>
           </div>}
+        {loading && (
+          <div className="loading-indicator">
+            <p>Fact-checking across trusted sources...</p>
+            <div className="spinner"></div>
+          </div>)}
         <div className="conclusion-section">
           {conclusion && <p>Conclusion: <span className="conclusion" data-status={conclusion}>{conclusion}</span> {confidence !== null && <span>| {Math.round(confidence * 100)}% Confidence</span>}</p>}
         </div>
