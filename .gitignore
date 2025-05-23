@@ -25,6 +25,8 @@ build/
 *.sln
 *.sw?
 
+# virtual environment
+venv/
 venv
 Thumbs.db
 
