@@ -3,6 +3,7 @@ import requests
 from .search_config import API_KEY, CSE_ID
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
+import re
 
 def get_domain(url):
     try:
@@ -59,12 +60,16 @@ def scrape_article_content(url):
 
         soup = BeautifulSoup(response.text, "html.parser")
 
-        article = soup.find("article") 
+        article = soup.find("article")
         if article:
-            return article.get_text(strip=True)
+            text = article.get_text()
         else:
             paragraphs = soup.find_all("p")
-            return " ".join([p.get_text() for p in paragraphs])
+            text = " ".join([p.get_text() for p in paragraphs])
+
+        text = re.sub(r'([.!?])([^\s])', r'\1 \2', text)
+
+        return text.strip()
 
     except requests.exceptions.RequestException as e:
         print(f"Error scraping article {url}: {e}")

@@ -32,9 +32,9 @@ qa_pipeline = pipeline("question-answering", model="distilbert-base-cased-distil
 
 def extract_relevant_quote(claim, passage, label):
     if label.lower() == "supports":
-        question = f"What sentence in the passage supports the claim: {claim}"
+        question = f"What is the most direct sentence that supports the claim: {claim}? The sentence should be no more than 50 words."
     elif label.lower() == "contradicts":
-        question = f"What sentence in the passage contradicts the claim: {claim}"
+        question = f"What is the most direct sentence that contradicts the claim: {claim}? The sentence should be no more than 50 words."
     else:
         return "No supporting or contradicting quote found."
 
@@ -42,8 +42,9 @@ def extract_relevant_quote(claim, passage, label):
     answer = result["answer"]
 
     sentences = re.split(r'(?<=[.!?]) +', passage)
+
     for sentence in sentences:
-        if answer.strip() in sentence:
+        if answer in sentence:
             return sentence.strip()
 
     return answer
@@ -59,8 +60,28 @@ def get_fact_check_result(quote: str, passage: str) -> dict:
     }
 
     if relation in ["supports", "contradicts"]:
-        result["extractedQuote"] = extract_relevant_quote(quote, passage, relation)
+        extracted_quote = extract_relevant_quote(quote, passage, relation)
+        result["extractedQuote"] = extracted_quote
+        
+        combined_text = f"Claim: {quote}\nEvidence: {extracted_quote}"
+        
+        result_classification = classifier(combined_text, candidate_labels=["supports", "contradicts", "not enough info"])
 
+        result["scores"] = {
+            "supports": round(result_classification['scores'][result_classification['labels'].index('supports')], 4),
+            "contradicts": round(result_classification['scores'][result_classification['labels'].index('contradicts')], 4),
+            "unclear": round(result_classification['scores'][result_classification['labels'].index('not enough info')], 4)
+        }
+
+        support_prob = result["scores"]["supports"]
+        contradict_prob = result["scores"]["contradicts"]
+
+        if result["relation"] != "unclear":
+            if support_prob > contradict_prob:
+                result["relation"] = "supports"
+            else:
+                result["relation"] = "contradicts"
+        
     return result
 
 
