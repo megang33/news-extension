@@ -10,11 +10,10 @@ function App() {
   const [articles, setArticles] = useState<any[]>([]);
   const [conclusion, setConclusion] = useState("");
   const [confidence, setConfidence] = useState<number | null>(null);
-  const [loading, setLoading] = useState(false);
 
-
+  
   useEffect(() => {
-    chrome.storage?.local.get("selectedText", (result) => {
+    chrome.storage.local.get("selectedText", (result) => {
       console.log(result.selectedText);
       if (result.selectedText) {
         const text = result.selectedText;
@@ -24,58 +23,6 @@ function App() {
       }
     });
   }, []);
-
-  // Testing Only
-  // useEffect(() => {
-  //   const mockConclusion = "unclear";
-  //   const mockConfidence = 0.9;
-  //   const mockArticles = [
-  //     {
-  //       title: "Trump's agenda faces crucial stretch with House Republicans",
-  //       link: "https://example.com/article1",
-  //       fact_check: {
-  //         relation: "unclear",
-  //         extractedQuote: "generated quote which may span more than one line hopefully???",
-  //         scores: {
-  //           supports: 0,
-  //           contradicts: 0,
-  //           unclear: 1
-  //         }
-  //       }
-  //     },
-  //     {
-  //       title: "Trump backs House's approach to budget plans to implement his...",
-  //       link: "https://example.com/article2",
-  //       fact_check: {
-  //         relation: "contradicts",
-  //         extractedQuote: "generated quote which may span more than one line hopefully???",
-  //         scores: {
-  //           supports: 0,
-  //           contradicts: 0.88,
-  //           unclear: 0.11
-  //         }
-  //       }
-  //     },
-  //     {
-  //       title: "Senate Republicans pass budget blueprint after all-night session...",
-  //       link: "https://example.com/article3",
-  //       fact_check: {
-  //         relation: "supports",
-  //         extractedQuote: "generated quote which may span more than one line hopefully???",
-  //         scores: {
-  //           supports: 0.6,
-  //           contradicts: 0.01,
-  //           unclear: 0.39
-  //         }
-  //       }
-  //     }
-  //   ];
-
-  //   // set the mock test state
-  //   setConclusion(mockConclusion);
-  //   setConfidence(mockConfidence);
-  //   setArticles(mockArticles);
-  // }, []);
 
 
   const getQuery = async (text: string) => {
@@ -87,16 +34,16 @@ function App() {
         },
         body: JSON.stringify({ text })
       });
-
+  
       const data = await response.json();
       const query = data.query || "";
       setSearchQuery(query);
       console.log("Generated Query:", query);
-      console.log(searchQuery) // so react doesn't complain
     } catch (error) {
       console.error("Error generating query:", error);
     }
   };
+  
 
   // const getConclusion = async (text: string, passage: string) => {
   //   try {
@@ -123,8 +70,6 @@ function App() {
   // };
 
   const runFullPipeline = async (claim: string) => {
-    console.log("Running Pipeline")
-    setLoading(true);
     try {
       const response = await fetch("http://localhost:8888/search_and_check", {
         method: "POST",
@@ -137,19 +82,16 @@ function App() {
       const data = await response.json();
       console.log("Full pipeline response:", data);
       setArticles(data.results || []);
-      determineConclusion(data.results || []);
-
+      determineConclusion(data.results || []); 
     } catch (error) {
       console.error("Error running full pipeline:", error);
-    } finally {
-      setLoading(false);
     }
   };
-
+  
   const determineConclusion = (articles: any[]) => {
-    const supportScores: number[] = [];
+    const supportScores: number[] = [];   
     const contradictScores: number[] = [];
-    const unclearScores: number[] = [];
+    const unclearScores: number[] = [];  
 
     articles.forEach((article) => {
       const scores = article.fact_check.scores;
@@ -175,47 +117,50 @@ function App() {
   };
 
   return (
-    <div className="layout">
-      <h2 className="header">Fact-Checker</h2>
-      <div className="highlight-section">
-        {selectedText &&
-          <div className="statement-section">
-            <p className="statement-title">{'\u{1f4a1}'} Statement Under Review</p>
-            <p className="statement-body">{selectedText}</p>
-          </div>}
-        {loading && (
-          <div className="loading-indicator">
-            <p>Fact-checking across trusted sources...</p>
-            <div className="spinner"></div>
-          </div>)}
-        <div className="conclusion-section">
-          {conclusion && <p>Conclusion: <span className="conclusion" data-status={conclusion}>{conclusion}</span> {confidence !== null && <span>| {Math.round(confidence * 100)}% Confidence</span>}</p>}
+    <>
+      <h1>Fact-Checking</h1>
+      <button onClick={() => { }}>
+        Start Read
+      </button>
+      {selectedText && <p>{selectedText}</p>}
+      {searchQuery && <p>Search Query: {searchQuery}</p>}
+
+{/* 
+      {relation && <p><strong>Conclusion:</strong> {relation}</p>}
+      {extractedQuote && <p><strong>Extracted Sentence:</strong> “{extractedQuote}”</p>}
+      {scores && (
+        <div>
+          <strong>Probabilities:</strong>
+          <ul>
+            <li>Supports: {scores.supports}</li>
+            <li>Contradicts: {scores.contradicts}</li>
+            <li>Unclear: {scores.unclear}</li>
+          </ul>
+        </div> )} */}
+
+      {conclusion && <p><strong>Conclusion:</strong> {conclusion}</p>}
+      {confidence !== null && <p><strong>Confidence:</strong> {Math.round(confidence * 100)}%</p>}
+
+       {articles.length > 0 && (
+        <div>
+          <h3>Sources:</h3>
+          <ul>
+            {articles.map((article, index) => (
+              <li key={index}>
+                <a href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
+                <p><strong>Conclusion: </strong> {article.fact_check.relation}</p>
+                <p><strong>Extracted Quote: </strong> {article.fact_check.extractedQuote}</p>
+                <p>
+                  <strong>Scores: </strong> 
+                  {`Supports: ${article.fact_check.scores.supports}, Contradicts: ${article.fact_check.scores.contradicts}, Unclear: ${article.fact_check.scores.unclear}`}
+                </p>
+
+              </li>
+            ))}
+          </ul>
         </div>
-        {articles.length > 0 && (
-          <div className="article-section">
-            <h3>Evidence</h3>
-            <ol>
-              {articles.map((article, index) => (
-                <li key={index} className="article-item">
-                  <div className="article-heading">
-                    <a className="article-title" href={article.link} target="_blank" rel="noopener noreferrer">{article.title}</a>
-                    <p className="article-conclusion" data-status={article.fact_check.relation}>{(() => {
-                      const scores = article.fact_check.scores;
-                      const maxScore = Math.max(scores.supports, scores.contradicts, scores.unclear);
-                      if (maxScore === scores.supports) return `${(maxScore * 100).toFixed(0)}%`;
-                      if (maxScore === scores.contradicts) return `${(maxScore * 100).toFixed(0)}%`;
-                      return `${(maxScore * 100).toFixed(0)}%`;
-                    })()}</p>
-                  </div>
-                  <p className="article-quote">↪ "{article.fact_check.extractedQuote}"</p>
-                  <div className="divider"></div>
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
-      </div>
-    </div>
+      )}
+    </>
   );
 
 }
