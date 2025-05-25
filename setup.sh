@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo "Creating virtual environment (if not exists)..."
-python3 -m venv venv
+python3.11 -m venv venv
 
 echo "Activating virtual environment..."
 source venv/bin/activate
@@ -15,4 +15,4 @@ pip install -r requirements.txt
 echo "Downloading spaCy model..."
 python -m spacy download en_core_web_sm
 
-echo "Setup complete. You can now run python run_llm_server.py"
+echo "Setup complete. You can now activate the virtual environment by running: source venv/bin/activate"

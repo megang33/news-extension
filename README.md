@@ -21,6 +21,7 @@ This is a chrome-based extension for fact checking.
 4. Setup LLM server in a virtual environment:
     ```sh
     ./setup.sh
+    source venv/bin/activate
     python run_llm_server.py
     ```
 5. Add extension to Chrome: see "Load extension in Chrome"
