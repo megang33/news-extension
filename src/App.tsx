@@ -3,6 +3,7 @@ import './App.css';
 
 function App() {
   const [selectedText, setSelectedText] = useState("");
+  const [articleTitle, setArticleTitle] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [articles, setArticles] = useState<any[]>([]);
   const [conclusion, setConclusion] = useState("");
@@ -10,22 +11,42 @@ function App() {
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    chrome.storage?.local.get("selectedText", (result) => {
-      if (result.selectedText) {
-        const text = result.selectedText;
-        setSelectedText(text);
-        getQuery(text);
-        runFullPipeline(text);
+    chrome.tabs?.query({ active: true, currentWindow: true }, (tabs) => {
+      if (tabs[0]?.id) {
+        chrome.tabs.sendMessage(
+          tabs[0].id,
+          { action: "getTitle" },
+          (response) => {
+            if (response?.title) {
+              setArticleTitle(response.title);
+              // optional: store in chrome.storage.local if needed later
+              chrome.storage.local.set({ articleTitle: response.title });
+            }
+          }
+        );
       }
     });
   }, []);
 
-  const getQuery = async (text: string) => {
+  useEffect(() => {
+    if (!articleTitle) return; // wait for title to be set
+
+    chrome.storage?.local.get("selectedText", (result) => {
+      if (result.selectedText) {
+        const text = result.selectedText;
+        setSelectedText(text);
+        getQuery(text, articleTitle);
+        runFullPipeline(text, articleTitle);
+      }
+    });
+  }, [articleTitle]);
+
+  const getQuery = async (text: string, title: string) => {
     try {
       const response = await fetch("http://localhost:8888/generate_query", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text })
+        body: JSON.stringify({ text, title })
       });
 
       const data = await response.json();
@@ -36,13 +57,13 @@ function App() {
     }
   };
 
-  const runFullPipeline = async (claim: string) => {
+  const runFullPipeline = async (claim: string, title: string) => {
     setLoading(true);
     try {
       const response = await fetch("http://localhost:8888/search_and_check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ claim })
+        body: JSON.stringify({ claim, title })
       });
 
       const data = await response.json();
@@ -90,9 +111,17 @@ function App() {
           </div>
         )}
 
+        {/* vvv FOR TESTING PURPOSES */}
+
         {searchQuery && (
           <p className="statement-query"><strong>Search Query:</strong> {searchQuery}</p>
         )}
+
+        {articleTitle && (
+          <p className="statement-query"><strong>Article Title:</strong> {articleTitle}</p>
+        )}
+
+        {/* ^^^ FOR TESTING PURPOSES */}
 
         {loading && (
           <div className="loading-indicator">
