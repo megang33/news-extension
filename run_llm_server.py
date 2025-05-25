@@ -11,12 +11,13 @@ CORS(app)
 @app.route("/generate_query", methods=["POST"])
 def handle_generate_query():
     text = request.json.get("text", "")
+    title = request.json.get("title", "")
 
     if not text:
         return jsonify({"error": "Missing text"}), 400
 
     try:
-        query = generate_clean_query(text)
+        query = generate_clean_query(text, title)
         return jsonify({ "query": query })
     except Exception as e:
         return jsonify({ "error": str(e) }), 500
@@ -25,12 +26,13 @@ def handle_generate_query():
 @app.route("/search_and_check", methods=["POST"])
 def handle_search_and_check():
     claim = request.json.get("claim", "")
+    title = request.json.get("title", "")
     if not claim:
         return jsonify({"error": "Missing claim"}), 400
 
     try:
         # current_url = request.json.get("current_url", "")
-        refined_query = generate_clean_query(claim)
+        refined_query = generate_clean_query(claim, title)
         articles = search_articles(refined_query)
         print("Total articles returned by search_articles:", len(articles))
 
