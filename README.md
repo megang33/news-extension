@@ -57,6 +57,9 @@ Your React app should now be loaded as a Chrome extension!
 - `tsconfig.json`: TypeScript configuration file.
 - `package.json`: Contains the project dependencies and scripts.
 
+## Icon PNG
+Found at: /public/assets/fact_icon.png
+
 ## License
 
 This project is licensed under the MIT License.
