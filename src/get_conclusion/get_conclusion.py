@@ -48,6 +48,7 @@ def does_passage_support_quote(quote, passage):
 #             return sentence.strip()
 
 #     return answer
+
 qa_pipeline = pipeline("text2text-generation", model="google/flan-t5-small")
 
 def extract_relevant_quote(claim, passage, label):
@@ -60,6 +61,7 @@ def extract_relevant_quote(claim, passage, label):
 
     with torch.no_grad():
         result = qa_pipeline(prompt, max_new_tokens=60, do_sample=False)
+
     return result[0]["generated_text"]
 
 
