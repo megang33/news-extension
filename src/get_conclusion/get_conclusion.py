@@ -28,26 +28,38 @@ def does_passage_support_quote(quote, passage):
         "unclear": round(unclear_prob, 4)
     }
 
-qa_pipeline = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
+# qa_pipeline = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
+
+# def extract_relevant_quote(claim, passage, label):
+#     if label.lower() == "supports":
+#         question = f"What is the most direct complete sentence that supports the claim: {claim}? Only return upto 50 words of the sentence and use ellipses if needed."
+#     elif label.lower() == "contradicts":
+#         question = f"What is the most direct complete sentence that contradicts the claim: {claim}? Only return upto 50 words of the sentence and use ellipses if needed."
+#     else:
+#         return "No supporting or contradicting quote found."
+
+#     result = qa_pipeline(question=question, context=passage)
+#     answer = result["answer"]
+
+#     sentences = re.split(r'(?<=[.!?]) +', passage)
+
+#     for sentence in sentences:
+#         if answer in sentence:
+#             return sentence.strip()
+
+#     return answer
+qa_pipeline = pipeline("text2text-generation", model="google/flan-t5-large")
 
 def extract_relevant_quote(claim, passage, label):
     if label.lower() == "supports":
-        question = f"What is the most direct sentence that supports the claim: {claim}? The sentence should be no more than 50 words."
+        prompt = f"Find a full sentence from the following passage that supports the claim: '{claim}'\nPassage: {passage}"
     elif label.lower() == "contradicts":
-        question = f"What is the most direct sentence that contradicts the claim: {claim}? The sentence should be no more than 50 words."
+        prompt = f"Find a full sentence from the following passage that contradicts the claim: '{claim}'\nPassage: {passage}"
     else:
         return "No supporting or contradicting quote found."
 
-    result = qa_pipeline(question=question, context=passage)
-    answer = result["answer"]
-
-    sentences = re.split(r'(?<=[.!?]) +', passage)
-
-    for sentence in sentences:
-        if answer in sentence:
-            return sentence.strip()
-
-    return answer
+    result = qa_pipeline(prompt, max_length=60, do_sample=False)
+    return result[0]["generated_text"]
 
 
 def get_fact_check_result(quote: str, passage: str) -> dict:
