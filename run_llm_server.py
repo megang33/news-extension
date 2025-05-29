@@ -47,13 +47,6 @@ def handle_search_and_check():
                 "fact_check": fact_check
             })
 
-            # #delete later
-            # return jsonify({
-            #     "refined_query": refined_query,
-            #     "results": results
-            # })
-            # ###
-
         return jsonify({
             "refined_query": refined_query,
             "results": results
