@@ -12,7 +12,7 @@ def get_domain(url):
     except:
         return ""
     
-def search_articles(query, num_results=5):
+def search_articles(query, num_results=5, exclude_url=None):
     fetch_limit = 10
     url = "https://www.googleapis.com/customsearch/v1"
     params = {
@@ -27,18 +27,25 @@ def search_articles(query, num_results=5):
     results = response.json()
 
     articles = []
-    # current_domain = get_domain(current_url) if current_url else ""
+    seen_links = set()
 
     for item in results.get("items", []):
         title = item.get("title")
         snippet = item.get("snippet")
         link = item.get("link")
 
-        if link.endswith("/") or link.count("/") <= 3:
+        # skip the article current link
+        if exclude_url and link.strip("/") == exclude_url.strip("/"):
             continue
 
-        # if current_domain and get_domain(link) == current_domain:
-            # continue
+        # skip duplicate links
+        if link in seen_links:
+            continue
+        seen_links.add(link)
+
+        # skip home page links
+        if link.endswith("/") or link.count("/") <= 3:
+            continue
 
         article_content = scrape_article_content(link)
         articles.append({

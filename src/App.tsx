@@ -63,7 +63,11 @@ function App() {
       const response = await fetch("http://localhost:8888/search_and_check", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ claim, title })
+        body: JSON.stringify({ 
+          claim, 
+          title,
+          current_url: window.location.href   
+        })
       });
 
       const data = await response.json();
