@@ -20,6 +20,20 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
             }
         });
 
+        // send message to popup/sidepanel to rerun pipeline
+        chrome.storage.local.set({
+            selectedText: info.selectionText,
+            factCheckResults: null,
+            conclusionCache: null,
+            confidenceCache: null,
+            queryCache: null,
+            }, () => {
+            chrome.runtime.sendMessage({
+                action: "newSelection",
+                selectedText: info.selectionText
+            });
+        });
+
         // open side panel
         chrome.sidePanel.open({ tabId: tab.id });
     }

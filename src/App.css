@@ -22,13 +22,6 @@
   margin-top: 0;
 }
 
-.save-button {
-  position: fixed;
-  margin: 20px;
-  right: 0;
-  top: 0;
-}
-
 /* .highlight-section {
   /* background: rgba(182, 179, 179, 0.5); */
 /* border-radius: 20px;
@@ -147,7 +140,50 @@ h3 {
   /* TODO CENTER */
 }
 
+h4 {
+  margin: 0;
+}
+
 .divider {
   border-top: 1px solid #eee;
   margin: 8px 0;
+}
+
+.back-button {
+  position: absolute;
+  margin: 20px;
+  left: 0;
+  top: 0;
+}
+
+.info-page {
+  padding-top: 50px;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  /* align-self: center; */
+}
+
+.info-link {
+  color: rgb(45, 45, 45);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  text-align: center;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.info-link:hover {
+  text-decoration: underline;
+  text-decoration-color: rgb(95, 93, 93);
+  color: rgb(95, 93, 93);
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.subheader {
+  font-weight: bold;
+  font-size: 15px;
 }
