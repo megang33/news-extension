@@ -28,11 +28,19 @@ def search_articles(query, num_results=5, exclude_url=None):
 
     articles = []
     seen_links = set()
+    BLACKLISTED_DOMAINS = {"transcripts.cnn.com"}
 
     for item in results.get("items", []):
         title = item.get("title")
         snippet = item.get("snippet")
         link = item.get("link")
+
+        domain = get_domain(link)
+        if domain in BLACKLISTED_DOMAINS:
+            continue
+
+        if "cnn.com" in link and "sitemap" in link:
+            continue
 
         # skip the article current link
         if exclude_url and link.strip("/") == exclude_url.strip("/"):
