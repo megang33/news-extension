@@ -75,7 +75,7 @@ function Home() {
     return () => {
       chrome.runtime.onMessage.removeListener(handleNewSelection); // reset listener
     };
-  }, [articleTitle]);
+  }, [selectedText]);
 
 
   const getQuery = async (text: string, title: string) => {
@@ -159,13 +159,13 @@ function Home() {
 
         {/* vvv FOR TESTING PURPOSES */}
 
-        {searchQuery && (
+        {/* {searchQuery && (
           <p className="statement-query"><strong>Search Query:</strong> {searchQuery}</p>
         )}
 
         {articleTitle && (
           <p className="statement-query"><strong>Article Title:</strong> {articleTitle}</p>
-        )}
+        )} */}
 
         {/* ^^^ FOR TESTING PURPOSES */}
 
@@ -176,14 +176,13 @@ function Home() {
           </div>
         )}
 
-        {conclusion && (
+        {conclusion && confidence && (
           <div className="conclusion-section">
             <p>
               Conclusion:{" "}
               <span className="conclusion" data-status={conclusion}>
-                {conclusion}
-              </span>{" "}
-              {confidence !== null && <span>| {Math.round(confidence * 100)}% Confidence</span>}
+                {conclusion} — {Math.round(confidence * 100)}%
+              </span>
             </p>
           </div>
         )}
@@ -206,15 +205,10 @@ function Home() {
                         {article.title}
                       </a>
                       <p className="article-conclusion" data-status={relation}>
-                        {relation} — {Math.max(scores.supports, scores.contradicts, scores.unclear) * 100 | 0}%
+                        {relation} {Math.max(scores.supports, scores.contradicts, scores.unclear) * 100 | 0}%
                       </p>
                     </div>
                     <p className="article-quote">↪ "{extractedQuote}"</p>
-                    {/* <ul className="score-list">
-                      <li>Supports: {scores.supports}</li>
-                      <li>Contradicts: {scores.contradicts}</li>
-                      <li>Unclear: {scores.unclear}</li>
-                    </ul> */}
                     <div className="divider"></div>
                   </li>
                 );
