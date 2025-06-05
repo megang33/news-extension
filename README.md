@@ -2,6 +2,8 @@
 
 This is a chrome-based extension for fact checking.
 
+![image info](./CS%20188%20Poster_%20News%20FactCheckr.png)
+
 ## Set up
 
 1. Clone the repository
