@@ -1,6 +1,6 @@
 # Fact-Checking News Extension
 
-This is a chrome-based extension for fact checking.
+Our system, FactCheckr, is a Google Chrome extension designed to fact-check text directly within a user’s browsing experience. When a user highlights a piece of text on an online news article and selects “Fact Check” from the right-click context menu, the extension activates. A side panel then opens, displaying a conclusion about whether the highlighted claim is widely supported or contradicted. This conclusion is backed by multiple relevant articles drawn from a curated set of large news sources. For each article, the system presents a summary of what it says about the highlighted claim, along with a confidence score indicating the article’s reliability and relevance. An overall confidence rating is also provided to help the user gauge how strongly the evidence supports the conclusion. To ensure transparency, the system includes an informational page that outlines the full pipeline, from how sources are selected, to how evidence is gathered and evaluated, to how conclusions are generated. This setup supports a realistic end-to-end scenario where a user encounters a questionable claim, activates the tool, and receives a clear, evidence-based assessment within seconds.
 
 ![image info](./CS%20188%20Poster_%20News%20FactCheckr.png)
 
